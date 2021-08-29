@@ -6,5 +6,5 @@ export const Services = styled.div`
 `;
 
 export const ServiceItem = styled.div`
-  ${tw`w-full sm:w-1/2`};
+  ${tw`w-full sm:w-1/3`};
 `;

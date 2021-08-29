@@ -11,53 +11,34 @@ import FormatHtml from 'components/utils/FormatHtml';
 import * as Styled from './styles';
 
 interface Post {
-  html: React.ReactNode;
-  fields: {
-    slug: string;
+  content: {
+    childMarkdownRemark: {
+      html: React.ReactNode;
+    };
   };
-  frontmatter: {
-    title: string;
-    date: string;
-  };
+  createdAt: string;
+  slug: string;
+  title: string;
 }
 
 interface Props {
   data: {
-    markdownRemark: Post;
+    contentfulPost: Post;
   };
   pageContext: {
     slug: string;
-    next: Post;
-    previous: Post;
   };
 }
 
 const BlogPost: React.FC<Props> = ({ data, pageContext }) => {
-  const post = data.markdownRemark;
-  const { previous, next } = pageContext;
+  const post = data.contentfulPost;
 
   return (
     <Layout>
-      <SEO title={post.frontmatter.title} />
+      <SEO title={post.title} />
       <Container section>
-        <TitleSection title={post.frontmatter.date} subtitle={post.frontmatter.title} />
-        <FormatHtml content={post.html} />
-        <Styled.Links>
-          <span>
-            {previous && (
-              <Link to={previous.fields.slug} rel="previous">
-                ← {previous.frontmatter.title}
-              </Link>
-            )}
-          </span>
-          <span>
-            {next && (
-              <Link to={next.fields.slug} rel="next">
-                {next.frontmatter.title} →
-              </Link>
-            )}
-          </span>
-        </Styled.Links>
+        <TitleSection title={post.createdAt} subtitle={post.title} />
+        <FormatHtml content={post.content.childMarkdownRemark.html} />
       </Container>
     </Layout>
   );
@@ -67,11 +48,13 @@ export default BlogPost;
 
 export const query = graphql`
   query BlogPostBySlug($slug: String!) {
-    markdownRemark(fields: { slug: { eq: $slug } }) {
-      html
-      frontmatter {
-        title
-        date(formatString: "MMM DD, YYYY")
+    contentfulPost(slug: { eq: $slug }) {
+      title
+      createdAt
+      content {
+        childMarkdownRemark {
+          html
+        }
       }
     }
   }

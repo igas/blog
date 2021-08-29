@@ -12,7 +12,7 @@ exports.onCreateWebpackConfig = ({ actions }) => {
 exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions;
 
-  if (node.internal.type === `MarkdownRemark`) {
+  if (node.internal.type === `MarkdownRemark` && node.fileAbsolutePath) {
     const value = createFilePath({ node, getNode });
     createNodeField({
       name: `slug`,
@@ -28,37 +28,24 @@ exports.createPages = async ({ graphql, actions }) => {
 
   const res = await graphql(`
     query {
-      allMarkdownRemark(
-        filter: { frontmatter: { category: { eq: "blog" } } }
-        sort: { fields: frontmatter___date, order: DESC }
-      ) {
+      allContentfulPost {
         edges {
           node {
-            fields {
-              slug
-            }
-            frontmatter {
-              title
-            }
+            slug
           }
         }
       }
     }
   `);
 
-  const posts = res.data.allMarkdownRemark.edges;
+  const posts = res.data.allContentfulPost.edges;
 
   posts.forEach((post, index) => {
-    const previous = index === posts.length - 1 ? null : posts[index + 1].node;
-    const next = index === 0 ? null : posts[index - 1].node;
-
     createPage({
-      path: `${post.node.fields.slug}`,
+      path: `${post.node.slug}`,
       component: blogPostTemplate,
       context: {
-        slug: `${post.node.fields.slug}`,
-        previous,
-        next
+        slug: `${post.node.slug}`
       }
     });
   });

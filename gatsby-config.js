@@ -1,8 +1,10 @@
+require('dotenv').config();
+
 module.exports = {
   siteMetadata: {
-    title: `Gatsby.JS`,
-    description: `Gatsby Markdown Personal Website Starter, using Typescript, Styled Components, Tailwindcss and Framer Motion.`,
-    author: `Saimir Kapaj`
+    title: `Igor Kapkov`,
+    description: `Igor Kapkov`,
+    author: `Igas`
   },
   plugins: [
     `gatsby-plugin-typescript`,
@@ -58,6 +60,14 @@ module.exports = {
       options: {
         tailwind: true,
         purgeOnly: [`src/assets/styles/global.css`]
+      }
+    },
+    {
+      resolve: `gatsby-source-contentful`,
+      options: {
+        spaceId: `ww09cpvbmvb1`,
+        // Learn about environment variables: https://gatsby.dev/env-vars
+        accessToken: process.env.CONTENTFUL_ACCESS_TOKEN
       }
     }
   ]
